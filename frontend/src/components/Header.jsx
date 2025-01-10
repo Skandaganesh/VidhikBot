@@ -9,8 +9,8 @@ const Header = () => {
   }
 
   return (
-    <div className='h-10 border-b-2 border-slate-500 bg-slate-900 text-black flex items-center py-1 px-3 justify-between'>
-        <p>DTE,Rajasthan AI ChatBot</p>
+    <div className='h-10 border-b-2 border-slate-500 bg-slate-900 text-white flex items-center py-1 px-3 justify-between'>
+        <p>VidhikBot</p>
         <div className='flex items-center gap-6'>
         <span className='text-lg'><i className="fa-solid fa-location-dot"></i></span>
           <div className='relative' onClick={handleNotifications}>

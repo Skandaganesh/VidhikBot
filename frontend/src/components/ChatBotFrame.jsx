@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Header from './Header'
+
 import SideBar from './SideBar'
 import ChatSection from './ChatSection'
 
@@ -8,7 +8,7 @@ const ChatBotFrame = () => {
 
   return (
     <div className='h-screen w-screen flex flex-col'>
-        <Header />
+        
         <div className='flex h-full'>
             <SideBar history={history} />
             <ChatSection handleHistory={() => setHistory(p => p+1)} />

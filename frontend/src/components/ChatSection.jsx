@@ -81,7 +81,7 @@ const ChatSection = ({ handleHistory }) => {
             }
             {isBotThinking?<ResponseLoader />:null}
         </div>    
-        <div className='flex items-center justify-center absolute bottom-0 right-0 left-0 backdrop-blur-[2px] pb-4 px-2'>
+        <div className='flex items-center justify-center absolute bottom-12 right-0 left-0 backdrop-blur-[2px] pb-4 px-2'>
         <Input getUserInput={getUserInput} />
         </div>
         <span className='text-lg text-slate-700 absolute top-0 right-0 flex items-center gap-1 bg-white rounded shadow py-1 px-2' onClick={createNewConversation}><i className="fa-solid fa-pen-to-square"></i><p className='text-sm font-semibold'>New Conversation</p></span>

@@ -9,9 +9,7 @@ const ChatSection = ({ handleHistory }) => {
   const chatRef = useRef(null);
 
   const colleges = [
-    'Government Polytechnic College, Ajmer',
-    'Government Polytechnic College, Jodhpur',
-    'Government Polytechnic College, Kota',
+    
   ];
 
   const selectCollege = (collegeInd) => {
@@ -44,8 +42,12 @@ const ChatSection = ({ handleHistory }) => {
     scrollToBottom();
   },[chats]);
 
-  const getUserInput = (value) => {
+  const getUserInput = async (value) => {
     setChats(prev => [...prev,{ content:value,isUser:true }]);
+    const res = await fetch(`http://localhost:8000/answer?query=${value}`);
+    const data = await res.json();
+    console.log(data);
+    
     setIsBotThinking(true);
     setTimeout(() => { getChatBotResponse(value); },2000);
   }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import ChatBotFrame from './components/ChatBotFrame';
 import ChatBotIcon from './ui/ChatBotIcon';
 import Navbar from './components/Navbar';
@@ -18,10 +17,11 @@ const App = () => {
   };
 
   return (
-    <BrowserRouter>
-      <div className={`bg-black text-black h-screen relative ${
-          openChatBot ? '' : 'overflow-hidden'
-        }`}>
+       <div className={`bg-gradient-to-br from-[#4169E1] via-[#ADD8E6] to-[#4169E1] text-black h-screen relative ${
+    openChatBot ? '' : 'overflow-hidden'
+  }`}>
+
+
         <Navbar closeNavbarAndChatBot={closeNavbarAndChatBot} />
         {openChatBot ? (
           <ChatBotFrame />
@@ -34,7 +34,6 @@ const App = () => {
           </div>
         )}
       </div>
-    </BrowserRouter>
   );
 };
 

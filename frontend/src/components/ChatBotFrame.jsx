@@ -7,8 +7,7 @@ const ChatBotFrame = () => {
   const [history, setHistory] = useState(1);
 
   return (
-    <div className='h-screen w-screen flex flex-col'>
-        
+    <div className='h-full w-screen flex flex-col'>
         <div className='flex h-full'>
             <SideBar history={history} />
             <ChatSection handleHistory={() => setHistory(p => p+1)} />

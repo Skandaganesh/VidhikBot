@@ -1,38 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Box, Button, AppBar, Toolbar, Typography } from '@mui/material';
+import { NavLink } from 'react-router-dom';
 
 const Navbar = ({ closeNavbarAndChatBot }) => {
   return (
-    <AppBar
-      position="sticky"
-      sx={{
-        background: 'linear-gradient(to right,rgb(21, 21, 21), #333, #1a1a1a)', 
-      }}
-    >
-      <Toolbar>
-        <Typography
-          variant="h6"
-          sx={{ flexGrow: 1, color: 'red', fontWeight: 'bold', cursor: 'pointer' }}
+    <nav className="sticky z-10 top-0 bg-gradient-to-r from-gray-700 via-gray-800 to-black text-white shadow-lg">
+      <div className="flex items-center justify-between px-6 py-4">
+        <h1
+          className="text-lg font-bold text-yellow-400 cursor-pointer"
           onClick={closeNavbarAndChatBot}
         >
           VidhikBot
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 3 }}>
-          <Button
-            component={Link}
+        </h1>
+        <div className="flex gap-6">
+          <NavLink
             to="/"
-            sx={{ color: 'white' }}
             onClick={closeNavbarAndChatBot}
+            className="text-white hover:text-yellow-300 transition duration-300"
           >
             Home
-          </Button>
-          <Button component={Link} to="/about" sx={{ color: 'white' }}>
+          </NavLink>
+          <NavLink
+            to="/about"
+            className="text-white hover:text-yellow-300 transition duration-300"
+          >
             About Us
-          </Button>
-        </Box>
-      </Toolbar>
-    </AppBar>
+          </NavLink>
+        </div>
+      </div>
+    </nav>
   );
 };
 

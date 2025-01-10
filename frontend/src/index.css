@@ -27,3 +27,9 @@ code {
 .mainbg{
   background-image: url('./assets/mainpage.png');
 }
+
+.metamorphous-regular {
+  font-family: "Metamorphous", serif;
+  font-weight: 400;
+  font-style: normal;
+}

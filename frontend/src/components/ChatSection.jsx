@@ -5,7 +5,6 @@ import ResponseLoader from '../loaders/ResponseLoader';
 import SelectionBox from './SelectionBox';
 
 const ChatSection = ({ handleHistory }) => {
-
   const chatRef = useRef(null);
 
   const colleges = [
@@ -62,15 +61,20 @@ const ChatSection = ({ handleHistory }) => {
     handleHistory();
   }
 
+  const handleSpeak = async(text) => {
+    const res = await fetch(`http://localhost:8000/speak?text=${text}`);
+    const data = await res.json();
+  }
+
   return (
     <div className='flex-1 flex flex-col relative p-2 bg-violet-50 bg-contain bg-no-repeat bg-center'>
-        <div className='flex flex-col gap-2 overflow-y-scroll overflow-x-hidden scroll-smooth pb-14' ref={chatRef}>
+        <div className='flex flex-col gap-2 overflow-y-scroll overflow-x-hidden scroll-smooth pb-28' ref={chatRef}>
             {
-              chats.map((response,ind) => <Response key={ind} response={response.content} isUser={response.isUser} />)
+              chats.map((response,ind) => <Response key={ind} response={response.content} isUser={response.isUser} handleSpeak={handleSpeak} />)
             }
             {isBotThinking?<ResponseLoader />:null}
         </div>    
-        <div className='flex items-center justify-center absolute bottom-12 right-0 left-0 backdrop-blur-[2px] pb-4 px-2'>
+        <div className='flex items-center justify-center absolute bottom-12 right-0 left-0 pb-4 px-2'>
         <Input getUserInput={getUserInput} />
         </div>
         <span className='text-lg text-slate-700 absolute top-0 right-0 flex items-center gap-1 bg-white rounded shadow py-1 px-2' onClick={createNewConversation}><i className="fa-solid fa-pen-to-square"></i><p className='text-sm font-semibold'>New Conversation</p></span>

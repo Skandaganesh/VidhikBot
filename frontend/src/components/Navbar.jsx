@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-
+import About from './About';
 const Navbar = ({ closeNavbarAndChatBot }) => {
   return (
     <nav className="sticky z-10 top-0 bg-gradient-to-r from-gray-700 via-gray-800 to-black text-white shadow-lg">
@@ -19,12 +19,12 @@ const Navbar = ({ closeNavbarAndChatBot }) => {
           >
             Home
           </NavLink>
-          <NavLink
+          {/* <NavLink
             to="/about"
             className="text-white hover:text-yellow-300 transition duration-300"
           >
             About Us
-          </NavLink>
+          </NavLink> */}
         </div>
       </div>
     </nav>

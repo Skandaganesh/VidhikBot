@@ -19,18 +19,17 @@ const ChatSection = ({ handleHistory }) => {
 
   const initialChats = [
     {
-      content:"Hey Nishant, How can I assist you today? 😊",
+      content:"Hey there!, How can I assist you today? 😊",
       isUser:false
     },
-    {
-      content:<SelectionBox colleges={colleges} selectCollege={selectCollege} />,
-      isUser:false
-    }
+    // {
+    //   content:<SelectionBox colleges={colleges} selectCollege={selectCollege} />,
+    //   isUser:false
+    // }
   ];
 
   const [chats, setChats] = useState(initialChats);
   const [isBotThinking, setIsBotThinking] = useState(false);
-  const [responseInd, setResponseInd] = useState(0);
 
   const scrollToBottom = () => {
     if (chatRef.current) {
@@ -42,32 +41,20 @@ const ChatSection = ({ handleHistory }) => {
     scrollToBottom();
   },[chats]);
 
-  const getUserInput = async (value) => {
+  const getUserInput = (value) => {
     setChats(prev => [...prev,{ content:value,isUser:true }]);
-    const res = await fetch(`http://localhost:8000/answer?query=${value}`);
-    const data = await res.json();
-    console.log(data);
-    
     setIsBotThinking(true);
-    setTimeout(() => { getChatBotResponse(value); },2000);
+    
+    getChatBotResponse(value);
   }
 
-  const getChatBotResponse = (userInput) => {
-    const chatBotResponses = [
-      "Government Polytechnic College Jodhpur was established in 1958. Initially, diploma certificate courses started at MBM Engineering College Jodhpur in 1951.",
-      "The college offers the following 3-year Diploma Courses: Civil Engineering, Electrical Engineering, Electronics & Fiber Optics Engineering, Mechanical Engineering, and Computer Science Engineering.",
-      "Yes, hostel facilities are available for both male and female students.",
-      "The Boys' Hostel provides 54 rooms, mess facilities, STD/PCO, water coolers, television, and newspapers to create a comfortable academic environment.",
-      "There is no college bus facility, but there's common bus available for colleges.",
-      "Yes, admission for first year diploma courses is open.",
-      "To apply for admission to the first-year diploma courses, you can visit the DTE Admission Portal at this link: https://dteapp.hte.rajasthan.gov.in/dte_admission/admission/index/1.",
-      "To apply, visit the admission link, register, fill out the application form, upload required documents, pay the application fee, and submit your application. Be sure to check the portal for updates on your application status.",
-      "You're welcome! If you have any more questions in the future or need assistance, feel free to reach out. Have a great day! 😊"
-    ];
+  const getChatBotResponse = async (userInput) => {
     
+    const res = await fetch(`http://localhost:8000/answer?query=${userInput}`);
+    const data = await res.json();
+    setChats(prev => [...prev,{ content:data?.answer,isUser:false }]);
     setIsBotThinking(false);
-    setChats(prev => [...prev,{ content:chatBotResponses[responseInd],isUser:false }]);
-    setResponseInd(p => p+1);
+    
   }
 
   const createNewConversation = () => {

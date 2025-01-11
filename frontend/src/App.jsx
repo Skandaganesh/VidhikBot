@@ -3,13 +3,17 @@ import ChatBotFrame from './components/ChatBotFrame';
 import ChatBotIcon from './ui/ChatBotIcon';
 import Navbar from './components/Navbar';
 import homeimg from './assets/homeimg.jpg';
-import {  Routes, Route } from 'react-router-dom';
-import AboutPage from './components/About';
+import { addToLocalStorage } from './helpers/localStorageHelper';
+import TextToSpeechComponent from './components/TextToSpeech';
 const App = () => {
   const [openChatBot, setOpenChatBot] = useState(false);
 
-  const handleOpenChatBot = () => {
+  const handleOpenChatBot = async () => {
     setOpenChatBot(true); 
+    const res= await fetch(`http://localhost:8000/start_session`);
+    const data = await res.json();
+    console.log(data);
+    addToLocalStorage("user_id",data.user_id);
   };
 
 
@@ -24,6 +28,7 @@ const App = () => {
   }`}>
 
         <Navbar closeNavbarAndChatBot={closeNavbarAndChatBot} />
+        <TextToSpeechComponent />
         {openChatBot ? (
           <ChatBotFrame />
         ) : (

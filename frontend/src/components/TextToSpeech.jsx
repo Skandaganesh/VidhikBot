@@ -4,12 +4,13 @@ import { textToSpeech } from '../helpers/textToSpeech';
 const TextToSpeechComponent = () => {
     const [text, setText] = useState('');
     const [audioSrc, setAudioSrc] = useState(null);
-    const VOICE_ID = 'Xb7hH8MSUJpSbSDYk0k2'; // Replace with your desired voice ID
+    // const VOICE_ID = '9BWtsMINqrJLrRacOk9x'; // Replace with your desired voice ID
 
     const handleGenerateSpeech = async () => {
         try {
-            const audio = await textToSpeech(text, VOICE_ID);
-            setAudioSrc(audio); // Set the audio source for playback
+            const audio = await textToSpeech(text);
+            // setAudioSrc(audio);
+            audio.play(); // Set the audio source for playback
         } catch (error) {
             console.error('Failed to generate speech:', error);
         }

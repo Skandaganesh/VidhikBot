@@ -28,7 +28,7 @@ const App = () => {
   }`}>
 
         <Navbar closeNavbarAndChatBot={closeNavbarAndChatBot} />
-        <TextToSpeechComponent />
+        
         {openChatBot ? (
           <ChatBotFrame />
         ) : (

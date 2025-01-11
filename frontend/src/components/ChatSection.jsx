@@ -8,9 +8,11 @@ import {
   clearLocalStorage,
   getFromLocalStorage,
 } from "../helpers/localStorageHelper";
+import { textToSpeech } from "../helpers/textToSpeech";
 
 const ChatSection = ({ handleHistory }) => {
   const chatRef = useRef(null);
+  // const [audioSrc, setAudioSrc] = useState(null);
 
   const colleges = [];
 
@@ -89,8 +91,13 @@ const ChatSection = ({ handleHistory }) => {
   };
 
   const handleSpeak = async (text) => {
-    const res = await fetch(`http://localhost:8000/speak?text=${text}`);
-    const data = await res.json();
+    try {
+      const audio = await textToSpeech(text);
+      audio.play();
+      // setAudioSrc(audio); // Set the audio source for playback
+  } catch (error) {
+      console.error('Failed to generate speech:', error);
+  }
   };
 
   return (
@@ -111,6 +118,7 @@ const ChatSection = ({ handleHistory }) => {
       </div>
       <div className="flex items-center justify-center absolute bottom-12 right-0 left-0 pb-4 px-2">
         <Input getUserInput={getUserInput} />
+        {/* {<audio className="opacity-0" controls autoPlay src={audioSrc} />} */}
       </div>
       <span
         className="text-lg text-slate-700 absolute top-0 right-0 flex items-center gap-1 bg-white rounded shadow py-1 px-2"

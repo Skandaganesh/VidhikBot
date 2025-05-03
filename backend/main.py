@@ -20,7 +20,7 @@ os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
 LLM = HuggingFaceEndpoint(repo_id=REPO_ID,max_length=250,temperature=0.7,token=HF_TOKEN)
 
 # Replace 'your_pdf_file.pdf' with the actual path to your PDF file.
-loader = PyPDFLoader("./data/exampl.pdf")
+loader = PyPDFLoader("/workspaces/VidhikBot/backend/data/250883_english_01042024.pdf")
 documents = loader.load()
 
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)

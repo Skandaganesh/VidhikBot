@@ -7,5 +7,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: PYTHON_VERSION=3.11.9
+      - key: PORT
+        value: 8000
 
     plan: free
+\

@@ -146,7 +146,7 @@ tenacity==8.5.0
 terminado==0.18.1
 threadpoolctl==3.6.0
 tinycss2==1.4.0
-tokenizers
+tokenizers==0.19.1
 torch==2.5.1
 tornado==6.4.2
 tqdm==4.67.1

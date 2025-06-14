@@ -89,7 +89,6 @@ nbformat==5.10.4
 nest-asyncio==1.6.0
 networkx==3.3
 notebook_shim==0.2.4
-numpy>=1.25.0,<2.0
 orjson==3.10.18
 overrides==7.7.0
 packaging==24.2
@@ -148,7 +147,7 @@ terminado==0.18.1
 threadpoolctl==3.6.0
 tinycss2==1.4.0
 tokenizers==0.19.1
-torch>=2.5.0,<2.6.0
+torch==2.5.1
 tornado==6.4.2
 tqdm==4.67.1
 traitlets==5.14.3

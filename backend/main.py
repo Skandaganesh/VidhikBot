@@ -21,8 +21,8 @@
 
 # LLM = HuggingFaceEndpoint(repo_id=REPO_ID, max_length=250, temperature=0.7, token=HF_TOKEN)
 
-# loader = PyPDFLoader("/data/250883_english_01042024.pdf")
-# documents = loader.load()
+#   path = Path(__file__).parent / "data" / "250883_english_01042024.pdf"
+#   loader = PyPDFLoader(str(path))
 
 # text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 # texts = text_splitter.split_documents(documents)
@@ -125,7 +125,9 @@ def generate_answer(query):
 @app.on_event("startup")
 def load_model():
     global retriever, llm_chain
-    loader = PyPDFLoader("/data/250883_english_01042024.pdf")
+    path = Path(__file__).parent / "data" / "250883_english_01042024.pdf"
+    loader = PyPDFLoader(str(path))
+
     documents = loader.load()
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     texts = text_splitter.split_documents(documents)

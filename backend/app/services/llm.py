@@ -14,7 +14,7 @@ llm_chain = LLMChain(prompt=prompt, llm=LLM)
 # Load documents and retriever
 from app.utils.pdf_loader import load_and_split_pdf
 
-texts = load_and_split_pdf("/workspaces/VidhikBot/backend/data")
+texts = load_and_split_pdf("/data")
 retriever = initialize_retriever(texts)
 
 print("LLM Chain Initialized")

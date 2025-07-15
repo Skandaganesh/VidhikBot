@@ -10,7 +10,8 @@ const App = () => {
 
   const handleOpenChatBot = async () => {
     setOpenChatBot(true); 
-    const res= await fetch(`http://localhost:8000/start_session`);
+    const res = await fetch(`${process.env.REACT_APP_SITE_URL}/start_session`);
+
     const data = await res.json();
     console.log(data);
     addToLocalStorage("user_id",data.user_id);

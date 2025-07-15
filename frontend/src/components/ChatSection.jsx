@@ -56,7 +56,7 @@ const ChatSection = ({ handleHistory }) => {
   };
 
   const getChatBotResponse = async (userInput) => {
-    const res = await fetch(`http://localhost:8000/answer`,{
+    const res = await fetch(`${process.env.REACT_APP_SITE_URL}/answer`,{
       headers: {
         "Content-Type": "application/json",
       },
@@ -69,7 +69,7 @@ const ChatSection = ({ handleHistory }) => {
   };
 
   const createNewConversation = async () => {
-    const res = await fetch("http://localhost:8000/end_session", {
+    const res = await fetch("${process.env.REACT_APP_SITE_URL}/end_session", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -81,7 +81,7 @@ const ChatSection = ({ handleHistory }) => {
     if (data.status === "success") {
       console.log("Session ended successfully");
       clearLocalStorage();
-      const res = await fetch(`http://localhost:8000/start_session`);
+      const res = await fetch(`${process.env.REACT_APP_SITE_URL}/start_session`);
       const data = await res.json();
       console.log(data);
       addToLocalStorage("user_id", data.user_id);

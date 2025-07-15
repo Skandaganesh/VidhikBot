@@ -69,7 +69,7 @@ const ChatSection = ({ handleHistory }) => {
   };
 
   const createNewConversation = async () => {
-    const res = await fetch("${process.env.REACT_APP_SITE_URL}/end_session", {
+    const res = await fetch(`${process.env.REACT_APP_SITE_URL}/end_session`, {
       headers: {
         "Content-Type": "application/json",
       },

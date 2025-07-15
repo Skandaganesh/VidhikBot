@@ -19,11 +19,11 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 def load_retriever():
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    db = FAISS.load_local("vector_store", embeddings)
+      db = FAISS.load_local("vector_store", embeddings, allow_dangerous_deserialization=True)
     return db.as_retriever(search_kwargs={"k": 3})
 
 
 def initialize_retriever(documents):
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    db = FAISS.load_local("vector_store", embeddings)
+   db = FAISS.load_local("vector_store", embeddings, allow_dangerous_deserialization=True)
     return db.as_retriever(search_kwargs={"k": 3})

@@ -32,7 +32,7 @@ import requests
 import os
 
 HF_TOKEN = os.getenv("HF_TOKEN")  # Set this in your .env
-API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+API_URL = "https://router.huggingface.co/hf-inference/models/facebook/bart-large-cnn"
 
 headers = {
     "Authorization": f"Bearer {HF_TOKEN}"

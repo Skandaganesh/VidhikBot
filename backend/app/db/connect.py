@@ -1,19 +1,18 @@
 import psycopg2
+import os
 
 def create_connection():
     try:
-        # Replace these parameters with your database credentials
-        connection = psycopg2.connect(
-            database="vidhik_bot",
-            user="shroudloaded",
-            password="kadleesports",
-            host="localhost",  # or your host IP
-            port="5432"        # default PostgreSQL port
-        )
+        db_url = os.getenv("DATABASE_URL")
+        if not db_url:
+            raise ValueError("DATABASE_URL environment variable not set")
+
+        connection = psycopg2.connect(db_url)
         print("Connection to the database established successfully.")
         return connection
     except Exception as e:
         print(f"An error occurred: {e}")
+        return None
 
 def close_connection(connection):
     if connection:

@@ -1,12 +1,13 @@
-from fastapi import APIRouter,Request,HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import StreamingResponse
-import uuid
 from pydantic import BaseModel
 from app.services.llm import generate_answer
 from app.db.connect import create_connection
 from app.services.summarizer import summarize_text
 from elevenlabs import ElevenLabs
+import uuid
 import os
+import psycopg2
 
 class UserData(BaseModel):
     user_id: str
@@ -18,49 +19,61 @@ class UserResponse(BaseModel):
 class textInput(BaseModel):
     text: str
 
+router = APIRouter()
 connection = create_connection()
 
-# Initialize the ElevenLabs client
+# ElevenLabs API
 client = ElevenLabs(api_key=os.getenv('ELEVEN_API'))
-
-router = APIRouter()
 
 @router.post("/answer")
 async def get_answer(userRes: UserResponse):
-    """
-    Endpoint to get answers for a query.
-
-    Args:
-        query (str): The user's query.
-
-    Returns:
-        dict: The response with the generated answer.
-    """
-    query = userRes.query
     user_id = userRes.user_id
-    cursor = connection.cursor()
-    cursor.execute(f"SELECT chat_history FROM user_chats WHERE user_id = '{user_id}'")
-    chat_history = cursor.fetchone()[0]
-    answer = generate_answer(query,chat_history)
-    final_chat_history = summarize_text(str({"user_query": query,"chatbot_response": answer,"chat_history": chat_history}))
-    cursor.execute(f"UPDATE user_chats SET chat_history = '{final_chat_history}' WHERE user_id = '{user_id}'")
-    connection.commit()
-    return {"query": query, "answer": answer}
+    query = userRes.query
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT chat_history FROM user_chats WHERE user_id = %s", (user_id,))
+        result = cursor.fetchone()
+        chat_history = result[0] if result else ""
+
+        answer = generate_answer(query, chat_history)
+        final_chat_history = summarize_text(str({
+            "user_query": query,
+            "chatbot_response": answer,
+            "chat_history": chat_history
+        }))
+
+        if result:
+            cursor.execute("UPDATE user_chats SET chat_history = %s WHERE user_id = %s", (final_chat_history, user_id))
+        else:
+            cursor.execute("INSERT INTO user_chats (user_id, chat_history) VALUES (%s, %s)", (user_id, final_chat_history))
+
+        connection.commit()
+        return {"query": query, "answer": answer}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/start_session")
-async def session_test():
-    user_id = str(uuid.uuid4()) # Generate a unique user ID
-    cursor = connection.cursor()
-    cursor.execute(f"INSERT INTO user_chats (user_id) VALUES ('{user_id}')")
-    connection.commit()
-    return {"user_id": user_id}
+async def start_session():
+    try:
+        user_id = str(uuid.uuid4())
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO user_chats (user_id) VALUES (%s)", (user_id,))
+        connection.commit()
+        return {"user_id": user_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/end_session")
-async def post_answer(user: UserData):
-    cursor = connection.cursor()
-    cursor.execute(f"DELETE FROM user_chats WHERE user_id = '{user.user_id}'")
-    connection.commit()
-    return {"session ended": user.user_id, "status": "success"}  
+async def end_session(user: UserData):
+    try:
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM user_chats WHERE user_id = %s", (user.user_id,))
+        connection.commit()
+        return {"session_ended": user.user_id, "status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/speak")
 async def generate_audio(input: textInput):
@@ -71,213 +84,17 @@ async def generate_audio(input: textInput):
             model="eleven_multilingual_v2"
         )
 
-        # Ensure audio is in bytes (e.g., if it's a file-like object)
-        if isinstance(audio, bytes):
-            audio_data = audio
-        else:
-            # If audio is not in bytes, convert it appropriately
-            audio_data = audio.read() if hasattr(audio, 'read') else None
+        audio_data = audio if isinstance(audio, bytes) else (
+            audio.read() if hasattr(audio, 'read') else None
+        )
 
         if audio_data is None:
             raise HTTPException(status_code=500, detail="Audio generation failed.")
 
-        # Create a generator to stream audio data
         async def audio_stream():
             yield audio_data
 
         return StreamingResponse(audio_stream(), media_type="audio/mpeg")
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

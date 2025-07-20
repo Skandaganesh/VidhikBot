@@ -11,7 +11,7 @@ def create_connection():
         print("Connection to the database established successfully.")
         return connection
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {e} ")
         return None
 
 def close_connection(connection):

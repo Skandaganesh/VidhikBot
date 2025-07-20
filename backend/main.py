@@ -302,10 +302,15 @@ def build_context(docs):
     return "\n".join(doc.page_content for doc in docs)
 
 def generate_answer(query):
-    docs = retriever.get_relevant_documents(query)
+    try:
+    docs = retriever.invoke(query)
+
     context = build_context(docs)
     result = llm_chain.invoke({"context": context, "query": query})
     return result["text"]
+    except Exception as e:
+        print("Error during /answer:", str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.on_event("startup")
 def load_resources():

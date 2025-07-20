@@ -48,5 +48,5 @@ def summarize_text(text, max_length=1000, min_length=15):
         }
     }
     response = requests.post(API_URL, headers=headers, json=payload)
-    response.raise_for_status()
+    response.raise_for_status() 
     return response.json()[0]["summary_text"]

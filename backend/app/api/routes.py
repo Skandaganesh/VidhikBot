@@ -52,6 +52,7 @@ async def get_answer(userRes: UserResponse):
         return {"query": query, "answer": answer}
 
     except Exception as e:
+        print("Error during /answer:", str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/start_session")

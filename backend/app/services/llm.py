@@ -68,7 +68,7 @@
 #         print("ERROR in generate_answer:", repr(e))
 #         return "Sorry, something went wrong while generating the answer."
 from app.core.config import HF_TOKEN, REPO_ID
-from langchain_community.llms import HuggingFaceEndpoint
+from langchain_huggingface import HuggingFaceEndpoint
 from app.core.templates import prompt  # PromptTemplate
 from app.services.retriever import initialize_retriever
 from app.utils.pdf_loader import load_and_split_pdf
@@ -79,10 +79,11 @@ if not HF_TOKEN:
 
 LLM = HuggingFaceEndpoint(
     repo_id=REPO_ID,
-    max_length=512,
+    max_new_tokens=512,
     temperature=0.7,
-    token=HF_TOKEN
+    huggingfacehub_api_token=HF_TOKEN  # ✅ Safer alternative
 )
+
 
 texts = load_and_split_pdf("data")
 retriever = initialize_retriever(texts)
@@ -96,11 +97,7 @@ def generate_answer(query: str, chat_history: list):
     try:
         docs = retriever.invoke(query)
         context = build_context(docs)
-        print("Context built. Length:", len(context))
-        print("Prompt Type:", type(prompt))
-        print("LLM Type:", type(LLM))
-        print("Docs Retrieved:", docs)
-        print("Context:", context[:100])
+      
         formatter = RunnableLambda(lambda d: prompt.format(**d))
         chain = (
             RunnableMap({

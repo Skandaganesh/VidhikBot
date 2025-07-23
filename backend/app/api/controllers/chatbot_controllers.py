@@ -5,52 +5,70 @@ from app.services.summarizer import summarize_text
 from app.api.models import UserData, UserResponse
 import uuid
 
-connection = connectDB()
+db = connectDB()
+user_chats = db["user_chats"]
 
 async def start_session() -> JSONResponse:
     try:
         user_id = str(uuid.uuid4())
-        cursor = connection.cursor()
-        cursor.execute("INSERT INTO user_chats (user_id) VALUES (%s)", (user_id,))
-        connection.commit()
-        return {"user_id": user_id}
-    except Exception as e:
-        raise JSONResponse(status_code=500, detail=str(e))
+        user_chats.insert_one({"user_id": user_id, "chat_history": []})
+        return JSONResponse(
+            status_code=201,
+            content={"data": {"user_id": user_id}, "message": "session started", "error": None}
+        )
+    except Exception:
+        return JSONResponse(
+            status_code=500,
+            content={"data": None, "message": "session was not initiated", "error": "an error in starting session"}
+        )
 
 async def end_session(user: UserData) -> JSONResponse:
     try:
-        cursor = connection.cursor()
-        cursor.execute("DELETE FROM user_chats WHERE user_id = %s", (user.user_id,))
-        connection.commit()
-        return {"session_ended": user.user_id, "status": "success"}
-    except Exception as e:
-        raise JSONResponse(status_code=500, detail=str(e))
-    
+        result = user_chats.delete_one({"user_id": user.user_id})
+        if result.deleted_count:
+            return JSONResponse(
+                status_code=200,
+                content={"data": {"user_id": user.user_id}, "message": "session ended", "error": None}
+            )
+        else:
+            return JSONResponse(
+                status_code=404,
+                content={"data": None, "message": "session not found", "error": "no session exists"}
+            )
+    except Exception:
+        return JSONResponse(
+            status_code=500,
+            content={"data": None, "message": "failed to end session", "error": "an error occurred during session termination"}
+        )
+
 async def get_answer(userRes: UserResponse) -> JSONResponse:
     user_id = userRes.user_id
     query = userRes.query
 
     try:
-        cursor = connection.cursor()
-        cursor.execute("SELECT chat_history FROM user_chats WHERE user_id = %s", (user_id,))
-        result = cursor.fetchone()
-        chat_history = result[0] if result else ""
+        record = user_chats.find_one({"user_id": user_id})
+        chat_history = record.get("chat_history", []) if record else []
 
-        answer = generate_answer(query, chat_history)
-        final_chat_history = summarize_text(str({
-            "user_query": query,
-            "chatbot_response": answer,
-            "chat_history": chat_history
-        }))
+        # retrieve only the textual history for the LLM
+        history_text = "\n".join(
+            [f"User: {h['user_query']}\nChatbot: {h['chatbot_response']}" for h in chat_history]
+        )
 
-        if result:
-            cursor.execute("UPDATE user_chats SET chat_history = %s WHERE user_id = %s", (final_chat_history, user_id))
-        else:
-            cursor.execute("INSERT INTO user_chats (user_id, chat_history) VALUES (%s, %s)", (user_id, final_chat_history))
+        answer = generate_answer(query, history_text)
 
-        connection.commit()
-        return {"query": query, "answer": answer}
+        # append new Q&A to history array
+        user_chats.update_one(
+            {"user_id": user_id},
+            {"$push": {"chat_history": {"user_query": query, "chatbot_response": answer}}},
+            upsert=True
+        )
 
-    except Exception as e:
-        print("Error during /answer:", str(e))
-        raise JSONResponse(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=200,
+            content={"data": {"query": query, "answer": answer}, "message": "answer generated", "error": None}
+        )
+    except Exception:
+        return JSONResponse(
+            status_code=500,
+            content={"data": None, "message": "error during answer generation", "error": "an error occurred while processing request"}
+        )

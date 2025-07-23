@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.api.routes import router
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.connect import create_connection
+# from app.db.connect import connectDB
 
 app = FastAPI(
     title="RAG Backend",
@@ -18,6 +18,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-create_connection()
+# connectDB()
 # Include API routes
 app.include_router(router)

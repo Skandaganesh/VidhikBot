@@ -1,27 +1,19 @@
-import psycopg2
-import os
+from pymongo import MongoClient
+from app.core.config import DATABASE_URL
 
-def create_connection():
+def connectDB():
     try:
-        db_url = os.getenv("DATABASE_URL")
-        if not db_url:
+        if not DATABASE_URL:
             raise ValueError("DATABASE_URL environment variable not set")
 
-        connection = psycopg2.connect(db_url)
+        client = MongoClient(DATABASE_URL)
         print("Connection to the database established successfully.")
-        return connection
+        return client["vidhik_bot"]
     except Exception as e:
         print(f"An error occurred: {e} ")
         return None
 
-def close_connection(connection):
-    if connection:
-        connection.close()
-        print("Database connection closed.")
-
-# create_connection()
-# Main execution flow
-# if __name__ == "__main__":
-#     conn = create_connection()
-#     if conn:
-#         close_connection(conn)
+# def close_connection(connection: MongoClient):
+#     if connection:
+#         connection.close()
+#         print("Database connection closed.")

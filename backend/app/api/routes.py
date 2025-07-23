@@ -2,12 +2,12 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from app.services.llm import generate_answer
-from app.db.connect import create_connection
+from app.db.connect import connectDB
 from app.services.summarizer import summarize_text
-from elevenlabs import ElevenLabs
+# from elevenlabs import ElevenLabs
 import uuid
-import os
-import psycopg2
+# import os
+# import psycopg2
 
 class UserData(BaseModel):
     user_id: str
@@ -20,10 +20,10 @@ class textInput(BaseModel):
     text: str
 
 router = APIRouter()
-connection = create_connection()
+connection = connectDB()
 
 # ElevenLabs API
-client = ElevenLabs(api_key=os.getenv('ELEVEN_API'))
+# client = ElevenLabs(api_key=os.getenv('ELEVEN_API'))
 
 @router.post("/answer")
 async def get_answer(userRes: UserResponse):
@@ -76,26 +76,26 @@ async def end_session(user: UserData):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/speak")
-async def generate_audio(input: textInput):
-    try:
-        audio = client.generate(
-            text=input.text,
-            voice="Alice",
-            model="eleven_multilingual_v2"
-        )
+# @router.post("/speak")
+# async def generate_audio(input: textInput):
+#     try:
+#         audio = client.generate(
+#             text=input.text,
+#             voice="Alice",
+#             model="eleven_multilingual_v2"
+#         )
 
-        audio_data = audio if isinstance(audio, bytes) else (
-            audio.read() if hasattr(audio, 'read') else None
-        )
+#         audio_data = audio if isinstance(audio, bytes) else (
+#             audio.read() if hasattr(audio, 'read') else None
+#         )
 
-        if audio_data is None:
-            raise HTTPException(status_code=500, detail="Audio generation failed.")
+#         if audio_data is None:
+#             raise HTTPException(status_code=500, detail="Audio generation failed.")
 
-        async def audio_stream():
-            yield audio_data
+#         async def audio_stream():
+#             yield audio_data
 
-        return StreamingResponse(audio_stream(), media_type="audio/mpeg")
+#         return StreamingResponse(audio_stream(), media_type="audio/mpeg")
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from app.api.routes import chatbot_router
+from app.api.routers.chatbot_router import chatbot_router
+from app.api.routers.knowledge_base_router import knowledge_base_router
 from fastapi.middleware.cors import CORSMiddleware
-# from app.db.connect import connectDB
 
 app = FastAPI(
     title="Vidhik: Indian Law Chatbot Backend",
@@ -19,4 +19,5 @@ app.add_middleware(
 )
 
 # Include API routes
+app.include_router(knowledge_base_router, prefix="/knowledge", tags=["Knowledge Base"])
 app.include_router(chatbot_router, prefix="/chat", tags=["Chatbot"])

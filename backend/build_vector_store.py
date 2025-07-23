@@ -2,10 +2,10 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings  # Fix import here
 from langchain_community.vectorstores import FAISS
-from pathlib import Path
+import os
 
-pdf1 = Path("data") / "250883_english_01042024.pdf"
-pdf2 = Path("data") / "250884_2_english_01042024.pdf"
+pdf1 = os.path.join("data", "law_1.pdf")
+pdf2 = os.path.join("data", "law_2.pdf")
 
 loader1 = PyPDFLoader(str(pdf1))
 loader2 = PyPDFLoader(str(pdf2))

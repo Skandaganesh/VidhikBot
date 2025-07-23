@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.controllers import start_session, end_session, get_answer
+from app.api.controllers.chatbot_controllers import start_session, end_session, get_answer
 from app.api.models import UserData, UserResponse
 
 chatbot_router = APIRouter()

@@ -9,3 +9,6 @@ class UserResponse(BaseModel):
 
 class textInput(BaseModel):
     text: str
+    
+class KnowlegdeQuery(BaseModel):
+    user_query: str

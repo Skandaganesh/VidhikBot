@@ -1,11 +1,11 @@
 from fastapi import FastAPI
-from app.api.routes import router
+from app.api.routes import chatbot_router
 from fastapi.middleware.cors import CORSMiddleware
 # from app.db.connect import connectDB
 
 app = FastAPI(
-    title="RAG Backend",
-    description="A backend for Retrieval-Augmented Generation",
+    title="Vidhik: Indian Law Chatbot Backend",
+    description="RAG-based Indian law chatbot backend",
     version="1.0.0",
 )
 
@@ -18,6 +18,5 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-# connectDB()
 # Include API routes
-app.include_router(router)
+app.include_router(chatbot_router, prefix="/chat", tags=["Chatbot"])

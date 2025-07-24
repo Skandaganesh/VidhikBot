@@ -1,0 +1,29 @@
+name: Deploy Backend to HF Space
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - "backend/**"       # Trigger only when backend changes
+  workflow_dispatch:     # Allows manual run if needed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Sync backend to Space
+        uses: nateraw/huggingface-sync-action@v0.0.5
+        with:
+          github_repo_id: ${{ github.repository }}
+          huggingface_repo_id: "Nishant007M/vidhik-bot"
+          repo_type: "space"
+          space_sdk: "docker"
+          subdirectory: "backend"       # <-- Only deploy this folder
+          hf_token: ${{ secrets.HF_TOKEN }}

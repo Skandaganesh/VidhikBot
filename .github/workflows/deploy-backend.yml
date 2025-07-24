@@ -1,12 +1,11 @@
-name: Deploy Backend to HF Space
+name: Deploy Backend to Hugging Face Space
 
 on:
   push:
-    branches:
-      - dev
+    branches: [dev]           # Trigger only on the dev branch
     paths:
-      - "backend/**"       # Trigger only when backend changes
-  workflow_dispatch:     # Allows manual run if needed
+      - 'backend/**'         # And only when backend/ changes
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -16,15 +15,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0       # Ensures full Git history
 
-      - name: Sync backend to Space
-        uses: nateraw/huggingface-sync-action@v0.0.5
-        with:
-          github_repo_id: ${{ github.repository }}
-          huggingface_repo_id: "Nishant007M/vidhik-bot"
-          repo_type: "space"
-          space_sdk: "docker"
-          subdirectory: "backend"       # <-- Only deploy this folder
-          hf_token: ${{ secrets.HF_TOKEN }}
-          private: false
+      - name: Push backend to HF Space
+        working-directory: backend
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SPACE_NAME: ${{ secrets.SPACE_NAME }}
+        run: |
+          git init
+          git remote add space https://Nishant007M:$HF_TOKEN@huggingface.co/spaces/Nishant007M/vidhik-bot
+          git add .
+          git commit -m "Deploy backend"
+          git push --force space HEAD:main

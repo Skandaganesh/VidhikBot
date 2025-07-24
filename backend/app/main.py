@@ -26,6 +26,7 @@ app.add_middleware(
 
 @app.get('/')
 async def check_health():
+    print("Hello, I am up and running")
     return "Hello Client, I am up and running"
 
 # Include API routes

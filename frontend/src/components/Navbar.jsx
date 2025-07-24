@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+
 const Navbar = ({ closeNavbarAndChatBot }) => {
   return (
     <nav className="sticky z-10 top-0 bg-gradient-to-r from-gray-700 via-gray-800 to-black text-white shadow-lg">
@@ -10,15 +10,6 @@ const Navbar = ({ closeNavbarAndChatBot }) => {
         >
           VidhikBot
         </h1>
-        <div className="flex gap-6">
-          <NavLink
-            to="/"
-            onClick={closeNavbarAndChatBot}
-            className="text-white hover:text-yellow-300 transition duration-300"
-          >
-            Home
-          </NavLink>
-        </div>
       </div>
     </nav>
   );

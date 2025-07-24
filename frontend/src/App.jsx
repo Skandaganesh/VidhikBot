@@ -3,20 +3,50 @@ import ChatBotFrame from './components/ChatBotFrame';
 import ChatBotIcon from './ui/ChatBotIcon';
 import Navbar from './components/Navbar';
 import homeimg from './assets/homeimg.jpg';
-import { addToLocalStorage, clearLocalStorage } from './helpers/localStorageHelper';
-const App = () => {
+import { addToLocalStorage, clearLocalStorage, getFromLocalStorage } from './helpers/localStorageHelper';
 
+const App = () => {
+  
   useEffect(() => {
-    // Clear previous session(in case new user or refresh)
-    clearLocalStorage();
+    // On load/refresh: check if there was a previous session
+    const existingUser = getFromLocalStorage('user_id');
+    console.log(existingUser);
+    
+    if (existingUser) {
+      // end that session
+      setIsLoading(true);
+      fetch(`${process.env.REACT_APP_SITE_URL}/chat/end_session`, {
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        body: JSON.stringify({ user_id: existingUser })
+      })
+      .then(res => {
+        if (res.status === 500) {
+          console.warn('Failed to auto-end session:', res.status);
+        }else clearLocalStorage();
+        return res.json().catch(() => null);
+      })
+      .then(errData => {
+        console.log('Auto end_session result:', errData);
+      })
+      .catch(err => {
+        console.error('Network error ending session:', err);
+      })
+      .finally(() => {
+        setStatusMsg("Get Started");
+        setIsLoading(false);
+      });
+    } else setStatusMsg("Get Started");
   }, []);
 
   const [openChatBot, setOpenChatBot] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("Getting it ready...");
 
   const handleOpenChatBot = async () => {
     try {
       setIsLoading(true);
+      setStatusMsg("Creating Session...");
       const res = await fetch(`${process.env.REACT_APP_SITE_URL}/chat/start_session`);
 
       if (!res.ok) {
@@ -33,15 +63,16 @@ const App = () => {
 
       const data = await res.json();
       console.log("Session started:", data);
-      addToLocalStorage("user_id", data.user_id);
+      addToLocalStorage("user_id", data.data.user_id);
       setOpenChatBot(true);
     } catch (error) {
       console.error("Failed to start chat session:", error);
       setOpenChatBot(false);
       // Optionally, show a user-friendly notification
-      alert(`Could not open chatbot: ${error.message}`);
+      alert(`Could not open chatbot`);
     } finally {
       setIsLoading(false);
+      setStatusMsg("Get Started");
     }
   };
 
@@ -80,7 +111,7 @@ const App = () => {
                 VidhikBot
               </p>
               <p className="text-2xl sm:text-3xl md:text-4xl text-white font-semibold mb-6">
-                Your AI Legal Guide
+                Your Indian Legal AI Guide
               </p>
               <button
                 className="
@@ -93,7 +124,7 @@ const App = () => {
                 onClick={handleOpenChatBot}
                 disabled={isLoading}
               >
-                {isLoading ? "Creating session..." : "Get Started"}
+                {statusMsg}
               </button>
               {/* Only show chatbot icon when not loading */}
               {!isLoading && (

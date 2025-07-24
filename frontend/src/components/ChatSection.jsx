@@ -21,6 +21,7 @@ const ChatSection = ({ remainingChatRequests, chatRequested, handleHistory }) =>
 
   const [chats, setChats] = useState(initialChats);
   const [isBotThinking, setIsBotThinking] = useState(false);
+  const [canChat, setCanChat] = useState(remainingChatRequests === 0);
 
   const scrollToBottom = () => {
     if (chatRef.current) {
@@ -33,6 +34,10 @@ const ChatSection = ({ remainingChatRequests, chatRequested, handleHistory }) =>
   }, [chats]);
 
   const getUserInput = async (value) => {
+    if(remainingChatRequests === 0) {
+      setCanChat(false);
+      return;
+    }
     setChats((prev) => [...prev, { content: value, isUser: true }]);
     setIsBotThinking(true);
     await getChatBotResponse(value);
@@ -63,7 +68,7 @@ const ChatSection = ({ remainingChatRequests, chatRequested, handleHistory }) =>
       }
 
       const data = await res.json();
-      setChats((prev) => [...prev, { content: data.answer, isUser: false }]);
+      setChats((prev) => [...prev, { content: data.data.answer, isUser: false }]);
     } catch (err) {
       console.error("Chatbot response error:", err);
       setChats((prev) => [
@@ -85,15 +90,11 @@ const ChatSection = ({ remainingChatRequests, chatRequested, handleHistory }) =>
         body: JSON.stringify({ user_id: getFromLocalStorage("user_id") }),
       });
 
-      if (!endRes.ok) {
+      if (endRes.status === 500) {
         throw new Error(`End session failed: ${endRes.status} ${endRes.statusText}`);
       }
       const endData = await endRes.json();
       console.log("End session response:", endData);
-
-      if (endData.status !== 200) {
-        throw new Error(`Server error ending session: ${endData?.message || endData.status}`);
-      }
 
       // Clear session
       clearLocalStorage();
@@ -105,7 +106,7 @@ const ChatSection = ({ remainingChatRequests, chatRequested, handleHistory }) =>
       }
       const startData = await startRes.json();
       console.log("Start session response:", startData);
-      addToLocalStorage("user_id", startData.user_id);
+      addToLocalStorage("user_id", startData.data.user_id);
 
       // Reset chats
       setChats(initialChats);
@@ -118,15 +119,20 @@ const ChatSection = ({ remainingChatRequests, chatRequested, handleHistory }) =>
     }
   };
 
-  const handleSpeak = async (text) => {
-    // try {
-    //   const audio = await textToSpeech(text);
-    //   audio.play();
-    //   // setAudioSrc(audio); // Set the audio source for playback
-    // } catch (error) {
-    //   console.error('Failed to generate speech:', error);
-    // }
-  };
+  const handleSpeak = async (text) => {};
+
+  if(!canChat) {
+    return (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20" onClick={() => setCanChat(true)}>
+              <div className="bg-white rounded-lg p-6 max-w-xs text-center">
+                <p className="text-lg font-semibold">Free Tier Limit Reached</p>
+                <p className="mt-2 text-gray-600">
+                  Please try again in 24 hours.
+                </p>
+              </div>
+            </div>
+          )
+  }
 
   return (
     <div className="flex-1 flex flex-col relative p-2 bg-violet-50 bg-contain bg-no-repeat bg-center">

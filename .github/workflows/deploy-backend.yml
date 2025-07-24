@@ -27,3 +27,4 @@ jobs:
           space_sdk: "docker"
           subdirectory: "backend"       # <-- Only deploy this folder
           hf_token: ${{ secrets.HF_TOKEN }}
+          private: false

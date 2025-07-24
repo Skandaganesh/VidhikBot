@@ -1,22 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import person from "../assets/person1.jpg";
 import chatbot1 from "../assets/chatbot1.jpg";
 
 const Response = ({ response, isUser, handleSpeak = () => {} }) => {
-  const [play, setPlay] = useState(false);
+  // const [play, setPlay] = useState(false);
 
-  const onPlay = (val) => {
-    if (!play) {
-      handleSpeak(val);
-      setPlay(true);
-      console.log("Playing");
+  // const onPlay = (val) => {
+  //   if (!play) {
+  //     handleSpeak(val);
+  //     setPlay(true);
+  //     console.log("Playing");
       
-    } else {
-      setPlay(false);
-      console.log("Paused");
+  //   } else {
+  //     setPlay(false);
+  //     console.log("Paused");
       
-    }
-  };
+  //   }
+  // };
 
   return (
     <div
@@ -38,7 +38,8 @@ const Response = ({ response, isUser, handleSpeak = () => {} }) => {
       >
         {response}
       </p>
-      {!isUser ? !play ? (
+      {/* convert text to audio */}
+      {/* {!isUser ? !play ? (
         <p className="text-xl">
           <i
             onClick={() => onPlay(response)}
@@ -52,7 +53,7 @@ const Response = ({ response, isUser, handleSpeak = () => {} }) => {
             className="fa-solid fa-pause"
           ></i>
         </p>
-      ):null}
+      ):null} */}
     </div>
   );
 };

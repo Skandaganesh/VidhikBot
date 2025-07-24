@@ -1,29 +1,17 @@
-# from langchain.vectorstores import FAISS
-# from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_core.vectorstores import VectorStoreRetriever
+from app.services.vector_store import create_vectorstore
 
-# def initialize_retriever(documents):
-#     """
-#     Initializes the retriever using FAISS and HuggingFace embeddings.
-
-#     Args:
-#         documents (list): List of documents.
-
-#     Returns:
-#         retriever: Initialized retriever.
-#     """
-#     embeddings = HuggingFaceEmbeddings()
-#     db = FAISS.from_documents(documents, embeddings)
-#     return db.as_retriever(search_kwargs={"k": 3})
-from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
-
-def load_retriever():
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    db = FAISS.load_local("vector_store", embeddings, allow_dangerous_deserialization=True)
-    return db.as_retriever(search_kwargs={"k": 3})
-
-
-def initialize_retriever(documents):
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    db = FAISS.load_local("vector_store", embeddings, allow_dangerous_deserialization=True)
-    return db.as_retriever(search_kwargs={"k": 3})
+async def create_retriever() -> VectorStoreRetriever | None:
+    try:
+        default_search_kwargs = {
+            'k': 3,
+            'score_threshold': 0.6
+        }
+        vector_store = await create_vectorstore()
+        if vector_store is None:
+            raise Exception("Vectorstore not available")
+        retriever = vector_store.as_retriever(search_kwargs=default_search_kwargs)
+        return retriever
+    except Exception as e:
+        print(f"error in retreiver: {e}")
+        return None

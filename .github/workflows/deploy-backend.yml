@@ -21,9 +21,10 @@ jobs:
         working-directory: backend
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          SPACE_NAME: ${{ secrets.SPACE_NAME }}
         run: |
           git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote add space https://Nishant007M:$HF_TOKEN@huggingface.co/spaces/Nishant007M/vidhik-bot
           git add .
           git commit -m "Deploy backend"

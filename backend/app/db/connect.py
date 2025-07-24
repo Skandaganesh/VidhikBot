@@ -13,7 +13,4 @@ def connectDB():
         print(f"An error occurred: {e} ")
         return None
 
-# def close_connection(connection: MongoClient):
-#     if connection:
-#         connection.close()
-#         print("Database connection closed.")
+db = connectDB()

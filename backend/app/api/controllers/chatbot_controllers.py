@@ -1,11 +1,9 @@
 from fastapi.responses import JSONResponse
-from app.services.llm import generate_answer
-from app.db.connect import connectDB
-from app.services.summarizer import summarize_text
+from app.services.tasks import generate_answer
+from app.db.connect import db
 from app.api.models import UserData, UserResponse
 import uuid
 
-db = connectDB()
 user_chats = db["user_chats"]
 
 async def start_session() -> JSONResponse:
@@ -54,7 +52,7 @@ async def get_answer(userRes: UserResponse) -> JSONResponse:
             [f"User: {h['user_query']}\nChatbot: {h['chatbot_response']}" for h in chat_history]
         )
 
-        answer = generate_answer(query, history_text)
+        answer = await generate_answer(query, history_text)
 
         # append new Q&A to history array
         user_chats.update_one(
@@ -65,7 +63,7 @@ async def get_answer(userRes: UserResponse) -> JSONResponse:
 
         return JSONResponse(
             status_code=200,
-            content={"data": {"query": query, "answer": answer}, "message": "answer generated", "error": None}
+            content={"data": {"query": query, "answer": str(answer)}, "message": "answer generated", "error": None}
         )
     except Exception:
         return JSONResponse(

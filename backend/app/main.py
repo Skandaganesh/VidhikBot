@@ -18,6 +18,10 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
+@app.get('/')
+async def check_health():
+    return "Hello Client, I am up and running"
+
 # Include API routes
 app.include_router(knowledge_base_router, prefix="/knowledge", tags=["Knowledge Base"])
 app.include_router(chatbot_router, prefix="/chat", tags=["Chatbot"])

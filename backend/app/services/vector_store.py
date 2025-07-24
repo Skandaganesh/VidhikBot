@@ -2,9 +2,8 @@ from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.schema import Document
 from typing import List
-from app.db.connect import connectDB
+from app.db.connect import db
 
-db = connectDB()
 embeddings = HuggingFaceEmbeddings()
 
 async def create_vectorstore() -> MongoDBAtlasVectorSearch | None:

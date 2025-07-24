@@ -1,18 +1,18 @@
-from app.core.config import HF_TOKEN, REPO_ID
-from langchain_huggingface import HuggingFaceEndpoint,ChatHuggingFace
+from app.core.config import PROVIDER_BASE_URL, PROVIDER_API_KEY, LLM_MODEL_NAME
+from langchain_openai import ChatOpenAI
 
 def createLLM(): 
     try:
-        llm = HuggingFaceEndpoint(
-            repo_id=REPO_ID,
-            task="conversational",
-            max_new_tokens=512,
-            do_sample=False,
-            repetition_penalty=1.03,
-            huggingfacehub_api_token=HF_TOKEN
+        chat_llm = ChatOpenAI(
+            base_url=PROVIDER_BASE_URL,
+            api_key=PROVIDER_API_KEY,
+            model=LLM_MODEL_NAME,
+            temperature=0.7,
+            max_tokens=None,
+            max_completion_tokens=150,
+            max_retries=2,
+            verbose=True,
         )
-        
-        chat_llm = ChatHuggingFace(llm=llm, verbose=True)
         print("LLM Initialized")
         return chat_llm
     except Exception as e:
@@ -20,9 +20,3 @@ def createLLM():
         return None
 
 chat_llm = createLLM()
-
-def build_context(docs):
-    return ""
-
-def generate_answer(query: str, chat_history: list):
-    return ""

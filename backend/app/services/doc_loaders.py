@@ -1,12 +1,12 @@
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from typing import List
+from typing import List, Optional
 from langchain.schema import Document
 import os
 
 files = ["law_1"]
 
-async def create_documents() -> List[Document] | None:
+async def create_documents() -> Optional[List[Document]]:
     try:
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=250)
         documents: List[Document] = []

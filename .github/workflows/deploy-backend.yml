@@ -1,0 +1,31 @@
+name: Deploy Backend to Hugging Face Space
+
+on:
+  push:
+    branches: [dev]           # Trigger only on the dev branch
+    paths:
+      - 'backend/**'         # And only when backend/ changes
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0       # Ensures full Git history
+
+      - name: Push backend to HF Space
+        working-directory: backend
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add space https://Nishant007M:$HF_TOKEN@huggingface.co/spaces/Nishant007M/vidhik-bot
+          git add .
+          git commit -m "Deploy backend"
+          git push --force space HEAD:main

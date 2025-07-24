@@ -1,12 +1,12 @@
 from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.schema import Document
-from typing import List
+from typing import List, Optional
 from app.db.connect import db
 
 embeddings = HuggingFaceEmbeddings()
 
-async def create_vectorstore() -> MongoDBAtlasVectorSearch | None:
+async def create_vectorstore() -> Optional[MongoDBAtlasVectorSearch]:
     try: 
         if db is None:
             raise Exception("DB is not connected")

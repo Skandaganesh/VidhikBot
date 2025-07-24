@@ -21,7 +21,7 @@ const ChatSection = ({ remainingChatRequests, chatRequested, handleHistory }) =>
 
   const [chats, setChats] = useState(initialChats);
   const [isBotThinking, setIsBotThinking] = useState(false);
-  const [canChat, setCanChat] = useState(remainingChatRequests === 0);
+  const [canChat, setCanChat] = useState(remainingChatRequests !== 0);
 
   const scrollToBottom = () => {
     if (chatRef.current) {
